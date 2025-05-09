@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Text Correction Test - PATEL G TECH LLP</title>
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #C4E8FD;
+      color: black;
+      overflow-x: hidden;
+    }
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    header {
+      background-color: #E5F1F7;
+      color: black;
+      padding: 20px;
+      text-align: center;
+    }
+    textarea {
+      width: 100%;
+      height: 200px;
+      font-size: 16px;
+      padding: 10px;
+      box-sizing: border-box;
+    }
+    input, button {
+      font-size: 16px;
+      padding: 10px;
+      margin: 5px 0;
+    }
+    .hidden {
+      display: none;
+    }
+    #timer {
+      font-weight: bold;
+      font-size: 18px;
+      margin-top: 10px;
+      text-align: right;
+    }
+    @keyframes blink {
+      0% { opacity: 1; }
+      50% { opacity: 0; }
+      100% { opacity: 1; }
+    }
+    .blinking {
+      animation: blink 1.2s linear infinite;
+    }
+    .input-group {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .input-group input {
+      flex: 1;
+    }
+  </style>
+  <script>
+    window.addEventListener('beforeunload', function (e) {
+      e.preventDefault();
+      e.returnValue = '';
+    });
+  </script>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <img style="float:left;margin-bottom: 2em;" src="company_logo.png" alt="Company Logo" height="29" onerror="this.style.display='none'" />
+      <p><b>URL: <a href="http://www.patelgtech.com">www.patelgtech.com</a></b></p>
+      <h1>📰 TEXT CORRECTION</h1>
+      <p id="timer">⏱ Time Left: --:--</p>
+    </header>
+
+    <h3 class="blinking" style="color: blue;"><u><strong>Instructions:</strong></u></h3>
+    <p style="color: blue;font-size: 1.2em;margin-top: -.5em;"><b>Please correct the text shown below and type your version in the box below. Click "Start Test" when ready. The text will auto-submit after 15 minutes.</b></p>
+
+    <div class="input-group">
+      <label for="candidateName" style="font-weight: bold;color:green;">Candidate Name:</label>
+      <input type="text" id="candidateName" placeholder="Enter your name" />
+      <button id="startBtn" style="font-family: 'Segoe UI', sans-serif;font-weight: bold;color: blue;">▶ Start Test</button>
+    </div>
+
+    <h3 style="color: red;"><u>Misspelled text:</u></h3>
+    <textarea id="ocrText" disabled>THE DAILV NEWS
+Thursdav. March 21. 2024
+
+Govt to Launch New Housina Scheme for Urban Poor
+
+The aovernment has ann0unced a new schem for provlding aff0rdable h0usina to the urban po0r in maJor cities.
+Accordinq to the offlcial statement. the proiect will be rolled out in phases, startina with metro cities such
+as Mumba1, Delhl and Chennal.
+
+Under the scherne. beneficiariee will be able to apply online thr0ugh a dedicated porta1. The minister of Urban
+Development stated that the housina units would be made available at subsidized rates.
+
+"This initiative will help tackle urban homelessness and improve livinq conditions for many," he said.
+
+The proqram is expected to begin from July 2024 and aims to build over 5 lakh units in the flrst phase.</textarea>
+
+    <h3 style="color: green;"><u>Your Corrected Text:</u></h3>
+    <textarea id="correctedText" disabled placeholder="Click 'Start Test' to begin..."></textarea>
+
+    <button id="submitBtn" class="hidden">✅ Submit Correction</button>
+  </div>
+
+  <script>
+    const correctedText = document.getElementById('correctedText');
+    const startBtn = document.getElementById('startBtn');
+    const submitBtn = document.getElementById('submitBtn');
+    const timerLabel = document.getElementById('timer');
+    const candidateName = document.getElementById('candidateName');
+    const ocrText = document.getElementById('ocrText');
+
+    const correctText = `THE DAILY NEWS
+Thursday, March 21, 2024
+
+Govt to Launch New Housing Scheme for Urban Poor
+
+The government has announced a new scheme for providing affordable housing to the urban poor in major cities. According to the official statement, the project will be rolled out in phases, starting with metro cities such as Mumbai, Delhi, and Chennai.
+
+Under the scheme, beneficiaries will be able to apply online through a dedicated portal. The Minister of Urban Development stated that the housing units would be made available at subsidized rates.
+
+"This initiative will help tackle urban homelessness and improve living conditions for many," he said.
+
+The program is expected to begin from July 2024 and aims to build over 5 lakh units in the first phase.`;
+
+    let countdown;
+    function startTest() {
+      if (!candidateName.value.trim()) {
+        alert("Please enter your name before starting the test.");
+        return;
+      }
+
+      correctedText.disabled = false;
+      ocrText.style.display = 'block';
+      startBtn.disabled = true;
+      submitBtn.classList.remove('hidden');
+
+      let timeLeft = 15 * 60;
+      countdown = setInterval(() => {
+        const mins = Math.floor(timeLeft / 60);
+        const secs = timeLeft % 60;
+        timerLabel.textContent = `⏱ Time Left: ${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+
+        if (--timeLeft < 0) {
+          clearInterval(countdown);
+          timerLabel.textContent = "⏱ Time's up!";
+          submitCorrection();
+        }
+      }, 1000);
+    }
+
+    function submitCorrection() {
+      const name = candidateName.value.trim();
+      const correction = correctedText.value.trim();
+
+      if (!name || !correction) {
+        alert("Please fill in both name and correction before submitting.");
+        return;
+      }
+
+      ocrText.style.display = 'none';
+
+      const userWords = correction.replace(/[\n\r]+/g, ' ').split(/\s+/);
+      const refWords = correctText.replace(/[\n\r]+/g, ' ').split(/\s+/);
+
+      let mismatch = 0;
+      const length = Math.min(userWords.length, refWords.length);
+      for (let i = 0; i < length; i++) {
+        if (userWords[i] !== refWords[i]) mismatch++;
+      }
+      mismatch += Math.abs(userWords.length - refWords.length);
+
+      const summary = `\n\n---\nMismatched Words: ${mismatch}`;
+      const blob = new Blob([correction + summary], { type: 'text/plain' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `${name}_correction.txt`;
+      a.click();
+
+      alert("Your correction has been submitted successfully.");
+      window.location.href = "https://www.google.com";
+    }
+
+    startBtn.addEventListener('click', startTest);
+    submitBtn.addEventListener('click', submitCorrection);
+  </script>
+</body>
+</html>
